@@ -9,7 +9,7 @@
   <meta property="og:description" content="SOCIAL MEDIA DESCRIPTION TAG TAG"/>
   <meta property="og:url" content="URL OF THE WEBSITE"/>
   <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X630-->
-  <meta property="og:image" content="static/image/your_banner_image.png" />
+  <meta property="og:image" content="static/images/compare" />
   <meta property="og:image:width" content="1200"/>
   <meta property="og:image:height" content="630"/>
 
@@ -37,6 +37,9 @@
   href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
   <link rel="stylesheet" href="static/css/index.css">
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://documentcloud.adobe.com/view-sdk/main.js"></script>
   <script defer src="static/js/fontawesome.all.min.js"></script>
@@ -409,22 +412,17 @@
 </section>
 
 
-<!-- Teaser video-->
-<section class="hero teaser">
-  <div class="container is-max-desktop">
-    <div class="hero-body">
-      <video poster="" id="tree" autoplay controls muted loop height="100%">
-        <!-- Your video here -->
-        <source src="static/videos/banner_video.mp4"
-        type="video/mp4">
-      </video>
+<section class="hero is-small">
+
+<div class="item">
+      <img src="static/images/compare.jpg" width="500" height="auto"/>
       <h2 class="subtitle has-text-centered">
-        A Video.
+        
+        <br>Our proposed SRAM quantify uncertainty, thus allowing  <br> the model to say "I do not know" in scenarios beyond its handling capacity. 
       </h2>
-    </div>
-  </div>
+</div>
+<br>
 </section>
-<!-- End teaser video -->
 
 <!-- Paper abstract -->
 <section class="section hero is-light">
@@ -443,8 +441,63 @@
 </section>
 <!-- End paper abstract -->
 
+<section class="section hero is-light">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Method</h2>
+        <div class="item">
+          <img src="static/images/model.png" width="800" height="auto"/>
 
+    </div>
+        <div class="content has-text-justified">
+          <p>
+            <br>
+            Overall architecture of SRAM. Firstly, an untrimmed video and masked query are encoded with a frozen encoder, then SRAM reconstructs the masked query tokens. In the second stage, SRAM performs temporal grounding on the video using the complete user's query. SRAM includes RFF blocks, an evidential head, a VTG head, and a Masked Language Model (MLM) head. The MLM head enclosed by the dashed box is trained only during the first stage.
+          </p>
+          <h3 class="title is-4">Learning Uncertainty with DER</h3>
+          <p>Temporal continuity in videos often causes adjacent frames to share similar semantics, complicating precise boundary delineation and introducing subjective biases in annotations. To mitigate this, we model semantic boundary moments using Gaussian distributions. Specifically, the start and end moments of a video-query pair \( (V, Q) \) are each governed by distinct Gaussian distributions. Observations of the same type (either all starts or all ends) are assumed to be i.i.d.. Without loss of generality, we formulate as follows:</p>
+
+            \[
+            b \sim\mathcal{N}(\mu,\sigma^2),
+            \]
+
+            where \( b \in \mathbb{R}^{1 \times \mathcal{H}}\) represents the start or end of moments observed \(\mathcal{H}\) times. The corresponding expectation \(\mu\) and variance \(\sigma^2\) of the Gaussian distribution subject to \( NIG \) prior:
+            
+            \[
+            \begin{align}
+            p(\mu,\sigma^2\mid\underbrace{\gamma,\upsilon,\alpha,\beta}_{\boldsymbol{\varphi }})
+            &=
+            \mathcal{N}(\mu|\gamma,\sigma^2 \upsilon^{-1})
+            \Gamma^{-1}(\sigma^2|\alpha,\beta) \\
+            &=\frac{\beta^\alpha\sqrt{\upsilon}}{\Gamma(\alpha)\sqrt{2\pi\sigma^2}}\left(\frac{1}{\sigma^2}\right)^{\alpha+1}
+            \exp\left\{-\frac{2\beta+\upsilon(\gamma-\mu)^2}{2\sigma^2}\right\}.
+            \end{align}
+            \]
+
+            where \(\boldsymbol{\varphi}=(\gamma, \upsilon, \alpha, \beta)\) are the prior \( NIG\) distribution parameters derived from the video content and user queries, serve as conditionals for the Gaussian estimates of \( b_i \), with \(\gamma \in \mathbb{R}, \upsilon > 0, \alpha > 1, \beta > 0\). The gamma function is denoted by \( \Gamma(\cdot)\). We use a linear evidential predictor to estimate \(\boldsymbol{\varphi }\), training it to maximize the likelihood. The maximum likelihood estimation for \(b_i\) is given by:
+            
+            \[
+            p(b_i \mid \boldsymbol{\varphi }) = \int_{\sigma^2=0}^\infty \int_{\mu=-\infty}^\infty p(b_i \mid \mu, \sigma^2) p(\mu, \sigma^2 \mid \boldsymbol{\varphi }) d\mu d\sigma^2 = \mathrm{St}(b_i; \gamma, \frac{\beta(1 + \upsilon)}{\upsilon \alpha}, 2\alpha).
+            \]
+
+            Since the likelihood function has a form of Student-t distribution \((\mathrm{St})\), we minimize the negative logarithmic likelihood (NLL) as follows.
+
+            \[
+            \mathcal{L}^{\mathrm{NLL}}_{i}=-\log p(b_i|\boldsymbol{\varphi })= -\log\left(\mathrm{St}\left(b_i;\gamma,\frac{\beta(1+\upsilon)}{\upsilon\alpha},2\alpha\right)\right).
+            \]
+          
+          <h3 class="title is-4">A better regularizer: Geom-regularization </h3>
+
+          </div>
+          
+          
+      </div>
+    </div>
+  </div>
+</section>
 <!-- Image carousel -->
+
 <!-- End image carousel -->
 
 
